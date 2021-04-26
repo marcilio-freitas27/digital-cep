@@ -1,12 +1,33 @@
+
 <?php
 
-
+# imports
 require "vendor/autoload.php";
+require "functions/mensagemSessao.php";
+require "functions/escolherExtensao.php";
+require "functions/validaCep.php";
 
+# packages
 use Marcilio\DigitalCep\Search;
+use Marcilio\DigitalCep\SearchApiConsulta;
+use Marcilio\DigitalCep\SearchCorreios;
 
-$busca = new Search;
+# http posts
+$busca_cep = $_POST['cep'];
+$extensao = $_POST['ext'];
 
-$resultado = $busca->getAddressFromZipcode('59147070');
+# instances
+$search = new Search;
+$search_api = new SearchApiConsulta;
+$search_correios = new SearchCorreios;
+$resultado = $search->getAddressFromZipcode($busca_cep);
+$resultado_api = $search_api->getAddressFromZipcode($busca_cep);
+$resultado_correios = $search_correios->getAddressFromZipcode($busca_cep);
 
-print_r($resultado);
+# functions
+if (validaCep($busca_cep)){
+    escolherExtensao($resultado, $resultado_api,$resultado_correios,$extensao);
+}
+
+header('location: index.php');
+
